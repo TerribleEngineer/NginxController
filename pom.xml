@@ -87,22 +87,34 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.4.13</version>
+				<configuration>
+					<imageName>goetz/nginx</imageName>
+					<forceTags>true</forceTags>
+					<!-- <imageName>registry.somewhere.com/goetz/nginx</imageName> -->
+					<dockerDirectory>docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}-fatjar.jar</include>
+						</resource>
+					</resources>
+				</configuration>
 				<executions>
 					<execution>
-						<id>copy-dependencies</id>
+						<id>build-image</id>
 						<phase>package</phase>
 						<goals>
-							<goal>copy-dependencies</goal>
+							<goal>build</goal>
 						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/dependencyJars</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>false</overWriteSnapshots>
-							<overWriteIfNewer>true</overWriteIfNewer>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
