@@ -8,10 +8,11 @@ This project aims to have a dockerized nginx reverse proxy which can have its ro
 - Two Available Ports
 
 ## Getting Started
+Note: For steps 3 and 4, you may need to precede these with sudo depending upon how you've configured your accounts during Docker installation
 1. Clone Repository
 2. cd NginxController/
 3. mvn install
-4. docker run -d -p *host port for UI*:7777 -p *host port for reverse proxy*:80
+4. docker run -d -p *host port for UI*:7777 -p *host port for reverse proxy*:80 goetz/nginx
 
 The Service's UI can be accessed from http://localhost:*host port for UI*/ui/index.html
 

@@ -71,6 +71,7 @@ function getRouteTable() {
 		success : function(data) {
 			console.log("success");
 			console.log(data.routes);
+			var port = data.proxyPort;
 			$("#routeContents").empty();
 
 			for (var i = 0; i < data.routes.length; i++) {
@@ -78,11 +79,21 @@ function getRouteTable() {
 				var trow = $("<tr>");
 
 				var locationData = $("<td>");
-				var locationContent = $("<a href='" + window.location.protocol
-						+ "//" + window.location.hostname + d.location + "'>"
-						+ d.location + "</a>");
-				locationData.append(locationContent);
-				locationData.appendTo(trow);
+				if (port != 80) {
+					var locationStr = "<a href='" + window.location.protocol
+							+ "//" + window.location.hostname + ":" + port
+							+ d.location + "'>" + d.location + "</a>";
+					var locationContent = $(locationStr);
+					locationData.append(locationContent);
+					locationData.appendTo(trow);
+				} else {
+					var locationStr = "<a href='" + window.location.protocol
+							+ "//" + window.location.hostname + d.location
+							+ "'>" + d.location + "</a>";
+					var locationContent = $(locationStr);
+					locationData.append(locationContent);
+					locationData.appendTo(trow);
+				}
 
 				var targetData = $("<td>");
 				var targetContent = $("<a href='" + d.target + "'>" + d.target

@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteList {
 
+	private int proxyPort = 80;
+
 	public RouteList() {
 
 	}
@@ -30,6 +32,14 @@ public class RouteList {
 
 	public void setRoutes(List<Route> routes) {
 		this.routes = routes;
+	}
+
+	public int getProxyPort() {
+		return proxyPort;
+	}
+
+	public void setProxyPort(int proxyPort) {
+		this.proxyPort = proxyPort;
 	}
 
 }

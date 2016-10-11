@@ -76,9 +76,12 @@ public class ConfigurationEndpoint {
 			nginx = NginxConfiguration.getInstance(configuration.getProxyname(), configuration.getProxyPort());
 		}
 
-		List<Route> routes = nginx.getRoutes();
+		RouteList routeList = new RouteList(nginx.getRoutes());
+		if (configuration.getProxyPort() != 80) {
+			routeList.setProxyPort(configuration.getProxyPort());
+		}
 
-		return Response.ok(new RouteList(routes)).build();
+		return Response.ok(routeList).build();
 	}
 
 	@GET
