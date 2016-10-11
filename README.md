@@ -9,6 +9,8 @@ This project aims to have a dockerized nginx reverse proxy which can have its ro
 
 ## Getting Started
 Note: For steps 3 and 4, you may need to precede these with sudo depending upon how you've configured your accounts during Docker installation
+
+
 1. Clone Repository
 2. cd NginxController/
 3. mvn install
