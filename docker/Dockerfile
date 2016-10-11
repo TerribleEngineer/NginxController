@@ -9,12 +9,7 @@ EXPOSE 7777
 EXPOSE 80
 
 RUN mkdir proxy
-
-COPY ./start.sh /proxy
 COPY nginx-controller-api-0.0.1-SNAPSHOT-fatjar.jar /proxy
-
 RUN mv /proxy/nginx-controller-api-0.0.1-SNAPSHOT-fatjar.jar /proxy-api.jar
-RUN mv /proxy/start.sh /start.sh
-RUN chmod +x /start.sh
 
-CMD ["/start.sh"]
+CMD /bin/bash -c "/usr/sbin/nginx; java -jar proxy-api.jar"
