@@ -14,6 +14,7 @@ This project aims to have a dockerized nginx reverse proxy which can have its ro
 4. docker run -d -p *host port for UI*:7777 -p *host port for reverse proxy*:80
 
 The Service's UI can be accessed from http://localhost:*host port for UI*/ui/index.html
+
 The REST endpoints can be found at http://localhost:*host port for UI*/nginx/application.wadl
 
 ## Future Developments
