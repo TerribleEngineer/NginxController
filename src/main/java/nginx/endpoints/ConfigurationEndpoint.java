@@ -56,8 +56,7 @@ public class ConfigurationEndpoint {
 				log.debug("Successfully reloaded nginx with new configuration");
 				return Response.ok(route).build();
 			} else {
-				log.error(
-						"Error reloading with new configuration; fallback to running with last successful configuration");
+				log.error("Error reloading with new configuration; fallback to running with last successful configuration");
 				return Response.notModified().build();
 			}
 		}

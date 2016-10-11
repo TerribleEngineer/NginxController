@@ -1,0 +1,12 @@
+a {
+	display: table;
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
+
+span {
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+}

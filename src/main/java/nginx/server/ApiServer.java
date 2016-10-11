@@ -28,8 +28,7 @@ public class ApiServer {
 		CLStaticHttpHandler fileContainer = new CLStaticHttpHandler(ApiServer.class.getClassLoader());
 		config.addHttpHandler(fileContainer, "/ui");
 
-		ResourceConfig rc = new ResourceConfig().packages("nginx")
-				.register(new ConfigurationBinder(configuration));
+		ResourceConfig rc = new ResourceConfig().packages("nginx").register(new ConfigurationBinder(configuration));
 		GrizzlyHttpContainer restContainer = GrizzlyUtil.getContainer(rc);
 		config.addHttpHandler(restContainer, "/nginx");
 
