@@ -4,7 +4,7 @@
 This project aims to have a dockerized nginx reverse proxy which can have its routes updated via a REST API.
 
 ## Prerequisites
-- Docker Engine installed
+- Docker Engine installed (Works with native linux/windows variants; boot2docker and other VM based engines are currently unsupported)
 - Two Available Ports
 
 ## Getting Started

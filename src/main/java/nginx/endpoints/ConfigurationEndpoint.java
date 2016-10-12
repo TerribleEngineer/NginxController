@@ -16,6 +16,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
+
 import nginx.data.NginxConfiguration;
 import nginx.data.Route;
 import nginx.data.RouteList;
@@ -56,7 +57,8 @@ public class ConfigurationEndpoint {
 				log.debug("Successfully reloaded nginx with new configuration");
 				return Response.ok(route).build();
 			} else {
-				log.error("Error reloading with new configuration; fallback to running with last successful configuration");
+				log.error(
+						"Error reloading with new configuration; fallback to running with last successful configuration");
 				return Response.notModified().build();
 			}
 		}
