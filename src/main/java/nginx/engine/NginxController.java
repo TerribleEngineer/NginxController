@@ -16,9 +16,8 @@ public class NginxController {
 
 	public static boolean reload(NginxConfiguration nginx, String configPath) {
 
-		String configString = nginx.generateConfiguration();
-
 		try {
+			String configString = nginx.generateConfiguration();
 			FileUtils.writeStringToFile(new File(configPath), configString, false);
 		} catch (IOException e) {
 			log.error("Error writing to nginx configuration file", e);

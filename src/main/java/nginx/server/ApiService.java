@@ -1,5 +1,9 @@
 package nginx.server;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -25,6 +29,10 @@ public class ApiService {
 		configuration = initializeConfiguration(args);
 		log.debug("Starting API Server w/ Configuration as: " + configuration.toString());
 		server = new ApiServer(configuration);
+
+		ScheduledExecutorService newSingleThreadScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+		newSingleThreadScheduledExecutor.schedule(new BootstrapRunner(), 4, TimeUnit.SECONDS);
+
 		server.startService();
 	}
 

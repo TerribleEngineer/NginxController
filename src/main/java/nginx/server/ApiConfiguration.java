@@ -6,7 +6,7 @@ public class ApiConfiguration {
 
 	Integer apiPort = 7777;
 	Integer proxyPort = 80;
-	String nginxConfigLocation = "/etc/nginx/conf.d/default.conf";
+	String nginxConfigLocation = "/etc/nginx/nginx.conf";
 	Boolean disableNginx = false;
 
 	public String getProxyname() {

@@ -1,6 +1,10 @@
 package nginx.endpoints;
 
-import java.util.List;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -49,7 +53,7 @@ public class ConfigurationEndpoint {
 			nginx = NginxConfiguration.getInstance(configuration.getProxyname(), configuration.getProxyPort());
 		}
 
-		nginx.addRoute(route);
+		nginx.addApplication(route.getApplicationName(), route.getLocation(), route.getBackendUrl());
 		log.debug("Route added to configuration: " + route.toString());
 
 		if (!configuration.getDisableNginx()) {
@@ -57,8 +61,7 @@ public class ConfigurationEndpoint {
 				log.debug("Successfully reloaded nginx with new configuration");
 				return Response.ok(route).build();
 			} else {
-				log.error(
-						"Error reloading with new configuration; fallback to running with last successful configuration");
+				log.error("Error reloading with new configuration; fallback to running with last successful configuration");
 				return Response.notModified().build();
 			}
 		}
@@ -94,51 +97,45 @@ public class ConfigurationEndpoint {
 			nginx = NginxConfiguration.getInstance(configuration.getProxyname(), configuration.getProxyPort());
 		}
 
-		return Response.ok(nginx.generateConfiguration()).build();
+		String config;
+
+		try {
+			config = nginx.generateConfiguration();
+			return Response.ok(config).build();
+		} catch (IOException e) {
+			log.error("Error generating nginx config file string", e);
+			return Response.serverError().build();
+		}
+
 	}
 
 	@DELETE
-	@Path("{uuid}")
+	@Path("{appName}/{backendServer}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response removeRoute(@Context UriInfo uriInfo, @PathParam("uuid") String uuid) {
+	public Response removeRoute(@Context UriInfo uriInfo, @PathParam("appName") String appName, @PathParam("backendServer") String encodedBackendServer)
+			throws URISyntaxException, UnsupportedEncodingException {
 
-		log.debug("DELETE received for location with uuid: " + uuid);
+		String backendServer = URLDecoder.decode(encodedBackendServer, "UTF-8");
+
+		log.debug("DELETE received for application " + appName + "'s backend = " + backendServer);
 
 		if (nginx == null) {
 			nginx = NginxConfiguration.getInstance(configuration.getProxyname(), configuration.getProxyPort());
 		}
 
-		List<Route> routes = nginx.getRoutes();
-		Integer removeIndex = null;
-
-		for (int i = 0; i < routes.size(); i++) {
-			Route route = routes.get(i);
-			if (route.getUuid().equals(uuid)) {
-				removeIndex = i;
-				break;
+		nginx.removeBackend(appName, backendServer);
+		
+		if (!configuration.getDisableNginx()) {
+			if (NginxController.reload(nginx, configuration.getNginxConfigLocation())) {
+				log.debug("Successfully reloaded nginx with new configuration");
+				return Response.ok().build();
+			} else {
+				log.error("Error reloading with new configuration; fallback to running with last successful configuration");
+				return Response.notModified().build();
 			}
 		}
 
-		if (removeIndex != null) {
-			if (routes.remove(removeIndex.intValue()) == null) {
-				log.debug("Error removing location from nginx configuration object");
-				return Response.serverError().build();
-			}
-
-			if (!configuration.getDisableNginx()) {
-				if (!NginxController.reload(nginx, configuration.getNginxConfigLocation())) {
-					return Response.serverError().build();
-				}
-			}
-
-			log.debug("Successfully removed location");
-			return Response.ok().build();
-
-		} else {
-			log.debug("Requested Location for removal not found in configured locations");
-			return Response.ok().build();
-		}
-
+		return Response.ok().build();
 	}
 
 }

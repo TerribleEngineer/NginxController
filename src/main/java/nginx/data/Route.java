@@ -8,20 +8,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Route {
 
-	String target;
+	String applicationName;
 	String location;
-	String uuid;
+	String backendUrl;
+
+	Boolean proxySpecific;
 
 	public Route() {
-		// Empty Constructor to appease the JAXB gods
+		proxySpecific = false;
 	}
 
-	public String getTarget() {
-		return target;
+	public Boolean getProxySpecific() {
+		return proxySpecific;
 	}
 
-	public void setTarget(String target) {
-		this.target = target;
+	public void setProxySpecific(Boolean proxySpecific) {
+		this.proxySpecific = proxySpecific;
 	}
 
 	public String getLocation() {
@@ -32,17 +34,9 @@ public class Route {
 		this.location = location;
 	}
 
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
 	@Override
 	public String toString() {
-		return getLocation() + " routing to " + getTarget();
+		return getLocation() + " routing to " + getBackendUrl();
 	}
 
 	public static boolean routeIsValid(Route route) {
@@ -56,13 +50,29 @@ public class Route {
 			return false;
 		}
 
-		String target = route.getTarget();
+		String target = route.getBackendUrl();
 
 		if (target == null || target.isEmpty()) {
 			return false;
 		}
 
 		return true;
+	}
+
+	public String getApplicationName() {
+		return applicationName;
+	}
+
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
+	}
+
+	public String getBackendUrl() {
+		return backendUrl;
+	}
+
+	public void setBackendUrl(String backendUrl) {
+		this.backendUrl = backendUrl;
 	}
 
 }
