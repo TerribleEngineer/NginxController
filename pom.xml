@@ -114,6 +114,11 @@
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>nginx.server.ApiService</mainClass>
 								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+									<resource>log4j.properties</resource>
+									<file>src/main/java/log4j.properties</file>
+								</transformer>
 							</transformers>
 						</configuration>
 					</execution>
