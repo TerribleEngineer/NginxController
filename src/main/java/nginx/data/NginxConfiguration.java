@@ -124,8 +124,6 @@ public class NginxConfiguration {
 	public String generateConfiguration() throws IOException {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("");
-
 		InputStream topStream = getClass().getClassLoader().getResourceAsStream("templates/nginx-top");
 		InputStream upperMiddleStream = getClass().getClassLoader().getResourceAsStream("templates/nginx-upper-middle");
 		InputStream lowerMiddleStream = getClass().getClassLoader().getResourceAsStream("templates/nginx-lower-middle");

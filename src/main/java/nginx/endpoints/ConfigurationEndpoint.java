@@ -89,6 +89,7 @@ public class ConfigurationEndpoint {
 	}
 
 	@GET
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response getConfiguration(@Context UriInfo uriInfo) {
 
 		log.debug("GET recieved from " + uriInfo.getBaseUri().toString());
@@ -102,7 +103,7 @@ public class ConfigurationEndpoint {
 		try {
 			config = nginx.generateConfiguration();
 			return Response.ok(config).build();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error("Error generating nginx config file string", e);
 			return Response.serverError().build();
 		}
