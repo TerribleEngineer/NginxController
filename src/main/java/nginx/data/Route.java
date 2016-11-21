@@ -12,18 +12,14 @@ public class Route {
 	String location;
 	String backendUrl;
 
-	Boolean proxySpecific;
-
 	public Route() {
-		proxySpecific = false;
+
 	}
 
-	public Boolean getProxySpecific() {
-		return proxySpecific;
-	}
-
-	public void setProxySpecific(Boolean proxySpecific) {
-		this.proxySpecific = proxySpecific;
+	public Route(String applicationName, String location, String backendUrl) {
+		setApplicationName(applicationName);
+		setLocation(location);
+		setBackendUrl(backendUrl);
 	}
 
 	public String getLocation() {

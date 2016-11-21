@@ -1,6 +1,5 @@
 package nginx.endpoints;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -61,7 +60,8 @@ public class ConfigurationEndpoint {
 				log.debug("Successfully reloaded nginx with new configuration");
 				return Response.ok(route).build();
 			} else {
-				log.error("Error reloading with new configuration; fallback to running with last successful configuration");
+				log.error(
+						"Error reloading with new configuration; fallback to running with last successful configuration");
 				return Response.notModified().build();
 			}
 		}
@@ -73,19 +73,25 @@ public class ConfigurationEndpoint {
 	@GET
 	@Path("routes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getRoutes(@Context UriInfo uriInfo) {
+	public Response getApplications(@Context UriInfo uriInfo) {
 		log.debug("GET recieved from " + uriInfo.getBaseUri().toString());
 
 		if (nginx == null) {
 			nginx = NginxConfiguration.getInstance(configuration.getProxyname(), configuration.getProxyPort());
 		}
 
-		RouteList routeList = new RouteList(nginx.getRoutes());
-		if (configuration.getProxyPort() != 80) {
-			routeList.setProxyPort(configuration.getProxyPort());
+		RouteList appList;
+		try {
+			appList = new RouteList(nginx.getApplications());
+			if (configuration.getProxyPort() != 80) {
+				appList.setProxyPort(configuration.getProxyPort());
+			}
+		} catch (URISyntaxException e) {
+			log.error("Error generating route list", e);
+			return Response.serverError().build();
 		}
 
-		return Response.ok(routeList).build();
+		return Response.ok(appList).build();
 	}
 
 	@GET
@@ -113,7 +119,8 @@ public class ConfigurationEndpoint {
 	@DELETE
 	@Path("{appName}/{backendServer}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response removeRoute(@Context UriInfo uriInfo, @PathParam("appName") String appName, @PathParam("backendServer") String encodedBackendServer)
+	public Response removeRoute(@Context UriInfo uriInfo, @PathParam("appName") String appName,
+			@PathParam("backendServer") String encodedBackendServer)
 			throws URISyntaxException, UnsupportedEncodingException {
 
 		String backendServer = URLDecoder.decode(encodedBackendServer, "UTF-8");
@@ -125,13 +132,14 @@ public class ConfigurationEndpoint {
 		}
 
 		nginx.removeBackend(appName, backendServer);
-		
+
 		if (!configuration.getDisableNginx()) {
 			if (NginxController.reload(nginx, configuration.getNginxConfigLocation())) {
 				log.debug("Successfully reloaded nginx with new configuration");
 				return Response.ok().build();
 			} else {
-				log.error("Error reloading with new configuration; fallback to running with last successful configuration");
+				log.error(
+						"Error reloading with new configuration; fallback to running with last successful configuration");
 				return Response.notModified().build();
 			}
 		}

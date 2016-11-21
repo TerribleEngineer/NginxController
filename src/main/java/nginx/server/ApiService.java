@@ -31,7 +31,7 @@ public class ApiService {
 		server = new ApiServer(configuration);
 
 		ScheduledExecutorService newSingleThreadScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-		newSingleThreadScheduledExecutor.schedule(new BootstrapRunner(), 4, TimeUnit.SECONDS);
+		newSingleThreadScheduledExecutor.schedule(new BootstrapRunner(), 2, TimeUnit.SECONDS);
 
 		server.startService();
 	}

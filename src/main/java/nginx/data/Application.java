@@ -3,9 +3,12 @@ package nginx.data;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Application {
 
 	String name;
@@ -13,44 +16,22 @@ public class Application {
 	Location location;
 	List<UpstreamServer> upstreamServers;
 
-	public Application(String name, String route, String backendUrl, Boolean temporary) throws URISyntaxException {
-		upstreamServers = new ArrayList<>();
-		this.name = name;
+	public Application(String name, String route, String backendUrl) throws URISyntaxException {
 
 		URI backendUri = new URI(backendUrl);
-		String scheme = backendUri.getScheme();
-		Integer port = backendUri.getPort();
-		String path = backendUri.getPath();
 
-		location = new Location();
-		location.setRoute(route);
-		location.setScheme(scheme);
-		location.setProxyPath(path);
+		setName(name);
+		setLocation(new Location(route, backendUri.getScheme(), backendUri.getPath()));
 
-		UpstreamServer upstreamServer = new UpstreamServer();
-		upstreamServer.setHost(backendUri.getHost());
-		upstreamServer.setPort(port);
-		upstreamServer.setTtl(new Date().getTime() + 1000 * 60);
-		if (temporary) {
-			upstreamServer.setRequireRefresh(true);
-		}
-
-		upstreamServers.add(upstreamServer);
+		UpstreamServer upstreamServer = new UpstreamServer(backendUri.getHost(), backendUri.getPort());
+		getUpstreamServers().add(upstreamServer);
 	}
 
-	public void addServer(String name, String route, String backendUrl, Boolean temporary) throws URISyntaxException {
+	public void addServer(String name, String route, String backendUrl) throws URISyntaxException {
 		URI backendUri = new URI(backendUrl);
-		Integer port = backendUri.getPort();
 
-		UpstreamServer upstreamServer = new UpstreamServer();
-		upstreamServer.setHost(backendUri.getHost());
-		upstreamServer.setPort(port);
-		upstreamServer.setTtl(new Date().getTime() + 1000 * 60);
-		if (temporary) {
-			upstreamServer.setRequireRefresh(true);
-		}
-
-		upstreamServers.add(upstreamServer);
+		UpstreamServer upstreamServer = new UpstreamServer(backendUri.getHost(), backendUri.getPort());
+		getUpstreamServers().add(upstreamServer);
 	}
 
 	public String getName() {

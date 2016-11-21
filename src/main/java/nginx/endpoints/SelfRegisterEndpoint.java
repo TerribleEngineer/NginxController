@@ -28,7 +28,6 @@ public class SelfRegisterEndpoint {
 		route.setApplicationName("ReverseProxyUI");
 		route.setLocation("/proxy-ui/");
 		route.setBackendUrl(targetString);
-		route.setProxySpecific(true);
 
 		return Response.ok(route).build();
 	}
@@ -48,7 +47,6 @@ public class SelfRegisterEndpoint {
 		route.setApplicationName("ReverseProxyApi");
 		route.setLocation("/proxy-api/");
 		route.setBackendUrl(targetString);
-		route.setProxySpecific(true);
 
 		return Response.ok(route).build();
 	}

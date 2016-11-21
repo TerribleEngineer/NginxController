@@ -7,12 +7,15 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 public class NginxConfiguration {
 
 	Logger log = Logger.getLogger(getClass());
+
 	List<Application> applications;
 
 	String name;
@@ -36,39 +39,18 @@ public class NginxConfiguration {
 		return name;
 	}
 
-	public List<Route> getRoutes() {
-		List<Route> routes = new ArrayList<>();
-
-		for (Application application : getApplications()) {
-			for (UpstreamServer upstreamServer : application.getUpstreamServers()) {
-				Route route = new Route();
-				route.setApplicationName(application.getName());
-				route.setLocation(application.getLocation().getRoute());
-				route.setBackendUrl(getBackend(application.getLocation(), upstreamServer));
-				routes.add(route);
-			}
-
-		}
-
-		return routes;
-	}
-
 	private String getBackend(Location location, UpstreamServer upstreamServer) {
-		String backendUrl = "";
-		backendUrl += location.getScheme();
-		backendUrl += "://";
-		backendUrl += upstreamServer.getHost();
+		UriBuilder builder = UriBuilder.fromPath(upstreamServer.getHost()).scheme(location.getScheme());
 
 		if (upstreamServer.getPort() != null) {
-			backendUrl += ":";
-			backendUrl += upstreamServer.getPort();
+			builder.port(upstreamServer.getPort());
 		}
 
 		if (location.getProxyPath() != null && !location.getProxyPath().isEmpty()) {
-			backendUrl += location.getProxyPath();
+			builder.path(location.getProxyPath());
 		}
 
-		return backendUrl;
+		return builder.build().toString();
 	}
 
 	public void setName(String name) {
@@ -84,25 +66,27 @@ public class NginxConfiguration {
 	}
 
 	public void addApplication(String name, String route, String backendUrl) {
-		addApplication(name, route, backendUrl, false);
-	}
-
-	public void addApplication(String name, String route, String backendUrl, Boolean temporary) {
 		for (Application application : getApplications()) {
-			if (application.getName().equals(name)) {
+			if (application.getName().equals(name) && application.getLocation().getRoute().equals(route)) {
 				log.debug("Application already exists within proxy.  Adding additional upstream server");
 				try {
-					application.addServer(name, route, backendUrl, temporary);
+					application.addServer(name, route, backendUrl);
 				} catch (URISyntaxException e) {
 					log.error("Error adding upstream server to application: " + name, e);
 				}
+				return;
+			} else if (application.getName().equals(name) && !application.getLocation().getRoute().equals(route)) {
+				log.error("Cannot create application; Name already associated with the provided route");
+				return;
+			} else if (!application.getName().equals(name) && application.getLocation().getRoute().equals(route)) {
+				log.error("Cannot create application; Route already associated with the provided Name");
 				return;
 			}
 		}
 
 		Application app;
 		try {
-			app = new Application(name, route, backendUrl, temporary);
+			app = new Application(name, route, backendUrl);
 			applications.add(app);
 		} catch (URISyntaxException e) {
 			log.error("Error creating new application", e);

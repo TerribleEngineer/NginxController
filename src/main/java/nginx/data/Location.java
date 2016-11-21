@@ -5,8 +5,10 @@ public class Location {
 	String route;
 	String proxyPath;
 
-	public Location() {
-
+	public Location(String route, String scheme, String proxyPath) {
+		setRoute(route);
+		setScheme(scheme);
+		setProxyPath(proxyPath);
 	}
 
 	public String getScheme() {
