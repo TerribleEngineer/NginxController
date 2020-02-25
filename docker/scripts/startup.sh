@@ -1,3 +1,3 @@
 #!/bin/bash
 /usr/sbin/nginx
-java -jar proxy-api.jar
+java -jar nginx-api.jar

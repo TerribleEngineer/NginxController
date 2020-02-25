@@ -1,15 +1,15 @@
-FROM centos:7
+FROM openjdk:15-slim
 
-RUN yum -y update && yum -y install epel-release
-RUN yum -y update && yum -y install java-1.7.0-openjdk nginx wget curl
+RUN apt-get -y update && apt-get install -y wget curl nginx vim
 
 ENV container=docker
 EXPOSE 80
 
+COPY web /ui
 COPY scripts/bootstrap.sh /bootstrap.sh
 COPY scripts/startup.sh /startup.sh
 RUN chmod +x /bootstrap.sh && chmod +x /startup.sh
 
-COPY nginx-controller-api-0.0.1-SNAPSHOT-fatjar.jar /proxy-api.jar
+COPY nginx-api.jar /nginx-api.jar
 
 CMD /bin/bash -c "/startup.sh"
