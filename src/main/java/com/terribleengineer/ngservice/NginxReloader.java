@@ -7,7 +7,8 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.terribleengineer.ngservice.configuration.Configuration;
 import com.terribleengineer.ngservice.nginxconfiguration.NginxConfiguration;
@@ -15,7 +16,7 @@ import com.terribleengineer.ngservice.nginxconfiguration.NginxConfigurationBuild
 
 public class NginxReloader {
 
-	private static Logger log = Logger.getLogger(NginxReloader.class);
+	protected static final Logger log = LogManager.getLogger(NginxReloader.class);
 
 	public static boolean reload(Configuration conf, NginxConfiguration nconf) {
 

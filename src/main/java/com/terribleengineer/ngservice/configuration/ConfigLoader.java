@@ -2,13 +2,14 @@ package com.terribleengineer.ngservice.configuration;
 
 import javax.naming.ConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Strings;
 
 public class ConfigLoader {
 
-	Logger log = Logger.getLogger(ConfigLoader.class);
+	protected static final Logger log = LogManager.getLogger(ConfigLoader.class);
 
 	private Env env;
 

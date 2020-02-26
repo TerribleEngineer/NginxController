@@ -2,11 +2,12 @@ package com.terribleengineer.ngservice.nginxconfiguration;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class NginxConfigurationBuilder {
 
-	static Logger log = Logger.getLogger(NginxConfigurationBuilder.class);
+	protected static final Logger log = LogManager.getLogger(NginxConfigurationBuilder.class);
 
 	public static String buildConfig(NginxConfiguration config) {
 		StringBuilder sb = new StringBuilder();

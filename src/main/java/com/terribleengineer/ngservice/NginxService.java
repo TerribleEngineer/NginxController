@@ -11,7 +11,8 @@ import java.util.Map;
 
 import javax.naming.ConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.terribleengineer.ngservice.configuration.ConfigLoader;
@@ -31,7 +32,7 @@ import com.terribleengineer.ngservice.nginxconfiguration.StaticContentLocation;
 
 public class NginxService {
 
-	static Logger log = Logger.getLogger(NginxService.class);
+	protected static final Logger log = LogManager.getLogger(NginxService.class);
 
 	public static void main(String[] args) throws ConfigurationException, InterruptedException, IOException {
 
@@ -44,6 +45,8 @@ public class NginxService {
 		port(config.getApiPort());
 
 		get("/", (req, res) -> {
+			log.debug("Retrieving API description");
+
 			res.type("application/json");
 			return new RestInfo("Available Endpoints:",
 					new EndpointInfo("/version", "GET", "Provides version information"),
@@ -56,20 +59,28 @@ public class NginxService {
 		}, new JsonTransformer());
 
 		get("/version", (req, res) -> {
+			log.debug("Retrieving API version");
+
 			res.type("application/json");
 			return new VersionInfo("0.1");
 		}, new JsonTransformer());
 
 		get("/health", (req, res) -> {
+			log.debug("Retrieving API health");
+
+			// TODO add mechanism to check status of nginx server here
+
 			res.type("application/json");
 			return new HealthInfo(Status.HEALTHY);
 		}, new JsonTransformer());
 
 		get("/config", (req, res) -> {
+			log.debug("Retrieving Nginx Configuration file");
 			return NginxConfigurationBuilder.buildConfig(ngConfig);
 		});
 
 		get("/locations", (req, res) -> {
+			log.debug("Retrieving Nginx Locations");
 			LocationListing list = new LocationListing();
 			Map<String, Location> locations = ngConfig.getLocations();
 			for (String location : locations.keySet()) {
@@ -80,25 +91,28 @@ public class NginxService {
 		}, new JsonTransformer());
 
 		post("/endpoint", (req, res) -> {
+			log.debug("Attempting to add Nginx proxy location...");
 			LocationInfo info = new Gson().fromJson(req.body(), LocationInfo.class);
 			ProxyLocation pl = new ProxyLocation(config.getApiBase() + info.getLocation(), info.getProxy());
 			ngConfig.addLocation(pl);
 
 			if (NginxReloader.reload(config, ngConfig)) {
+				log.debug("Nginx proxy location added.");
 				res.status(200);
 				return NginxConfigurationBuilder.buildConfig(ngConfig);
 			} else {
 				ngConfig.removeLocation(pl);
 			}
 
+			log.debug("Unable to add new Nginx proxy location, rolling back.");
 			res.status(406);
 			return NginxConfigurationBuilder.buildConfig(ngConfig);
 
-		}, new JsonTransformer());
+		});
 
 		delete("/endpoint", (req, res) -> {
+			log.debug("Attempting to remove Nginx proxy location...");
 			LocationInfo info = new Gson().fromJson(req.body(), LocationInfo.class);
-			log.debug("Attempting to remove " + info.getLocation());
 			Location removed = null;
 
 			if (ngConfig.getLocations().containsKey(config.getApiBase() + info.getLocation())) {
@@ -108,32 +122,36 @@ public class NginxService {
 					for (String s : ngConfig.getLocations().keySet()) {
 						log.debug("test: " + s);
 					}
+
+					log.debug("Nginx proxy location removed.");
 					res.status(200);
 					return NginxConfigurationBuilder.buildConfig(ngConfig);
 				} else {
-					log.debug("Could not successfully remove requested entry");
+					log.debug("Unable to remove Nginx proxy location.");
 					ngConfig.getLocations().put(removed.getLocation(), removed);
 				}
+			} else {
+				log.debug("Presented location for deletion not found in Nginx configuration.");
 			}
 
 			res.status(406);
 			return NginxConfigurationBuilder.buildConfig(ngConfig);
-		}, new JsonTransformer());
+		});
 
 		awaitInitialization();
 
-		log.debug("running bootstrap script...");
-
-		StaticContentLocation baseStatic = new StaticContentLocation("/ui", "/",
+		log.debug("Initializing system...");
+		StaticContentLocation baseUi = new StaticContentLocation("/_ui", "/",
 				"User Interface supporting the Nginx Gateway");
-		ProxyLocation proxy = new ProxyLocation("/ngapi", "http://" + config.getHostname() + ":" + config.getApiPort(),
+		StaticContentLocation baseStatic = new StaticContentLocation("/", "/www", "Static Storage Root");
+		ProxyLocation proxy = new ProxyLocation("/_ng", "http://" + config.getHostname() + ":" + config.getApiPort(),
 				"Nginx Gateway Control API");
+		ngConfig.addLocation(baseUi);
 		ngConfig.addLocation(baseStatic);
 		ngConfig.addLocation(proxy);
 
 		NginxReloader.reload(config, ngConfig);
-
-		log.debug("system ready.");
+		log.debug("System now ready.");
 
 	}
 

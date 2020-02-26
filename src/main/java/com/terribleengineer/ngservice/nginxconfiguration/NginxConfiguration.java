@@ -5,11 +5,12 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class NginxConfiguration {
 
-	Logger log = Logger.getLogger(NginxConfiguration.class);
+	protected static final Logger log = LogManager.getLogger(NginxConfiguration.class);
 
 	Integer port;
 	String serverName;

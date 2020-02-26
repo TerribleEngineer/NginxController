@@ -2,16 +2,8 @@ package com.terribleengineer.ngservice.nginxconfiguration;
 
 public abstract class Location {
 
-	String location;
 	String description;
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
+	String location;
 
 	public Location(String location) {
 		this.location = location;
@@ -23,14 +15,22 @@ public abstract class Location {
 		this.description = description;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
 	public String getLocation() {
 		return location;
+	}
+
+	public abstract boolean isStaticContentLocation();
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public void setLocation(String location) {
 		this.location = location;
 	}
-
-	public abstract boolean isStaticContentLocation();
 
 }
