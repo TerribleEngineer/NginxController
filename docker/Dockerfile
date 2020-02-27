@@ -14,3 +14,4 @@ COPY nginx-api.jar /nginx-api.jar
 CMD /bin/bash -c "/startup.sh"
 
 RUN mkdir /www
+

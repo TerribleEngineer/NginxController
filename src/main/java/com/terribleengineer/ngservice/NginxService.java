@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.terribleengineer.jwt.JwtMaker;
 import com.terribleengineer.ngservice.configuration.ConfigLoader;
 import com.terribleengineer.ngservice.configuration.Configuration;
 import com.terribleengineer.ngservice.models.EndpointInfo;
@@ -54,7 +55,7 @@ public class NginxService {
 					new EndpointInfo("/config", "GET", "Retrieve a copy of the Nginx config file"),
 					new EndpointInfo("/endpoint", "POST",
 							"Adds a proxy location; payload={ 'location' : 'nginx path', 'detail':'proxied location, 'description': 'Human readable detailing of the location'}"),
-					new EndpointInfo("/enpoint", "DELETE", "Removes a proxy location {'location':'nginx path'}"));
+					new EndpointInfo("/endpoint", "DELETE", "Removes a proxy location {'location':'nginx path'}"));
 
 		}, new JsonTransformer());
 
@@ -73,6 +74,25 @@ public class NginxService {
 			res.type("application/json");
 			return new HealthInfo(Status.HEALTHY);
 		}, new JsonTransformer());
+
+		// TODO add mechanism for setting specific JWT subjects
+
+		get("/resetjwt", (req, res) -> {
+			log.debug("Resetting static jwt");
+
+			JwtMaker jwtMaker = new JwtMaker();
+			String jwt = jwtMaker.getDevJwt();
+			ngConfig.setJwt(jwt);
+			res.type("text/plain");
+			return jwt;
+		});
+
+		get("/jwt", (req, res) -> {
+			log.debug("Resetting static jwt");
+
+			res.type("text/plain");
+			return ngConfig.getJwt();
+		});
 
 		get("/config", (req, res) -> {
 			log.debug("Retrieving Nginx Configuration file");
@@ -141,12 +161,9 @@ public class NginxService {
 		awaitInitialization();
 
 		log.debug("Initializing system...");
-		StaticContentLocation baseUi = new StaticContentLocation("/_ui", "/",
-				"User Interface supporting the Nginx Gateway");
 		StaticContentLocation baseStatic = new StaticContentLocation("/", "/www", "Static Storage Root");
 		ProxyLocation proxy = new ProxyLocation("/_ng", "http://" + config.getHostname() + ":" + config.getApiPort(),
 				"Nginx Gateway Control API");
-		ngConfig.addLocation(baseUi);
 		ngConfig.addLocation(baseStatic);
 		ngConfig.addLocation(proxy);
 

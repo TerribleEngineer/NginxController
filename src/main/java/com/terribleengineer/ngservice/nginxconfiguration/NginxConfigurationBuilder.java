@@ -22,6 +22,7 @@ public class NginxConfigurationBuilder {
 
 		sb.append("\n\n");
 		sb.append("http {\n");
+		sb.append("\tinclude /etc/nginx/mime.types;\n");
 		sb.append("server {\n");
 
 		sb.append("\tserver_name " + config.getServerName() + ";\n");
@@ -37,6 +38,7 @@ public class NginxConfigurationBuilder {
 				sb.append("\t\tindex index.html index.htm;\n");
 				sb.append("\t\tautoindex on;\n");
 				sb.append("\t\troot " + scl.getRootPath() + ";\n");
+				sb.append("\t\tadd_header Authentication 'Bearer " + config.getJwt() + "';\n");
 				sb.append("\t}\n\n");
 			} else {
 				ProxyLocation pl = (ProxyLocation) location;
@@ -44,6 +46,7 @@ public class NginxConfigurationBuilder {
 				sb.append("\t\tproxy_pass " + pl.getProxypass() + ";\n");
 				sb.append("\t\tproxy_set_header Host $host;\n");
 				sb.append("\t\tproxy_set_header X-Real-IP $remote_addr;\n");
+				sb.append("\t\tadd_header Authentication 'Bearer " + config.getJwt() + "';\n");
 				sb.append("\t}\n\n");
 			}
 		}

@@ -30,6 +30,10 @@ public class JwtMaker {
 		tmGroups.put("PUBLIC", publicPermissions);
 	}
 
+	public String getDevJwt() {
+		return this.getJwt(JwtMaker.TEMP_SUBJECT, false, 7);
+	}
+
 	public String getJwt(String subject, Boolean isGsp, Integer tokenDurationDays) {
 		JwtBuilder builder = Jwts.builder();
 
@@ -56,8 +60,10 @@ public class JwtMaker {
 
 	public static void main(String[] args) {
 		JwtMaker maker = new JwtMaker();
-		String jwt = maker.getJwt("CN=Goetz Michael Ctr,OU=OU,O=Altamira,L=Default City,ST=Ohio,C=US", false, 7);
+		String jwt = maker.getJwt(JwtMaker.TEMP_SUBJECT, false, 7);
 		System.out.println(jwt);
 	}
+
+	public static final String TEMP_SUBJECT = "CN=Goetz Michael Ctr,OU=OU,O=Altamira,L=Default City,ST=Ohio,C=US";
 
 }

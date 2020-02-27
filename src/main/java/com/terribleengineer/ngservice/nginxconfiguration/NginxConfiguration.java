@@ -8,6 +8,8 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.terribleengineer.jwt.JwtMaker;
+
 public class NginxConfiguration {
 
 	protected static final Logger log = LogManager.getLogger(NginxConfiguration.class);
@@ -15,6 +17,18 @@ public class NginxConfiguration {
 	Integer port;
 	String serverName;
 	String serverIp;
+	String jwt;
+
+	public String getJwt() {
+		if (jwt == null) {
+			jwt = new JwtMaker().getDevJwt();
+		}
+		return jwt;
+	}
+
+	public void setJwt(String jwt) {
+		this.jwt = jwt;
+	}
 
 	Map<String, Location> locations;
 

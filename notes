@@ -1,0 +1,21 @@
+Running the server in interactive mode:
+
+$docker run -e "HOSTNAME=localhost" -e "CONTROL_PORT=9797" -e "PROXY_PORT=8888" -e "DEBUG=False" --net=host -it -v /{SOMEDIR}:/www goetz/nginx:0.1 bash
+
+Upon container startup, then run
+$./startup.sh
+
+At this point:
+
+	localhost:8888			Shows all static content
+	localhost:8888/_ng		Endpoint for the nginx control API
+	localhost:8888/ui		User Interface for nginx details
+
+
+You can add more static UI content by pasting items into the SOMEDIR above
+You can add more API content via curl:
+	$curl -X POST -d '{"location": "/logging", "proxy": "http://localhost:4567"}' localhost:8888/_ng/endpoint
+	
+	"location" is the path for the api added to the nginx proxy (will be found at /api/{location})
+	"proxy" is the proxy_pass nginx directive for the API location being added 
+	
