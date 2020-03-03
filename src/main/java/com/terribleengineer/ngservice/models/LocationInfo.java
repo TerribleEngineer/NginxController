@@ -4,6 +4,18 @@ public class LocationInfo {
 	String location;
 	String proxy;
 	String description;
+	Boolean trailingSlash;
+
+	public Boolean getTrailingSlash() {
+		if (trailingSlash == null) {
+			trailingSlash = true;
+		}
+		return trailingSlash;
+	}
+
+	public void setTrailingSlash(Boolean trailingSlash) {
+		this.trailingSlash = trailingSlash;
+	}
 
 	public LocationInfo() {
 

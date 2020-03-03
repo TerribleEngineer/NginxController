@@ -113,7 +113,8 @@ public class NginxService {
 		post("/endpoint", (req, res) -> {
 			log.debug("Attempting to add Nginx proxy location...");
 			LocationInfo info = new Gson().fromJson(req.body(), LocationInfo.class);
-			ProxyLocation pl = new ProxyLocation(config.getApiBase() + info.getLocation(), info.getProxy());
+			ProxyLocation pl = new ProxyLocation(config.getApiBase() + info.getLocation(), info.getProxy(),
+					info.getTrailingSlash());
 			ngConfig.addLocation(pl);
 
 			if (NginxReloader.reload(config, ngConfig)) {
@@ -163,7 +164,7 @@ public class NginxService {
 		log.debug("Initializing system...");
 		StaticContentLocation baseStatic = new StaticContentLocation("/", "/www", "Static Storage Root");
 		ProxyLocation proxy = new ProxyLocation("/_ng", "http://" + config.getHostname() + ":" + config.getApiPort(),
-				"Nginx Gateway Control API");
+				"Nginx Gateway Control API", true);
 		ngConfig.addLocation(baseStatic);
 		ngConfig.addLocation(proxy);
 

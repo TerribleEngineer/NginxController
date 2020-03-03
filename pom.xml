@@ -142,7 +142,6 @@
 						</filter>
 					</filters>
 				</configuration>
-
 			</plugin>
 
 			<plugin>
@@ -150,13 +149,11 @@
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.4.13</version>
 				<configuration>
-					<imageName>goetz/nginx</imageName>
+					<imageName>terribleengineer/nginx</imageName>
 					<forceTags>true</forceTags>
-					<imageTags>0.1</imageTags>
-					<!-- <imageName>registry.somewhere.com/goetz/nginx</imageName> -->
+					<imageTags>0.2</imageTags>
 					<dockerDirectory>docker</dockerDirectory>
 					<resources>
-
 						<resource>
 							<targetPath>/</targetPath>
 							<directory>${project.build.directory}</directory>
@@ -174,8 +171,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
 		</plugins>
 	</build>
 </project>

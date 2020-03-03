@@ -9,23 +9,23 @@ public class ProxyLocation extends Location {
 
 	String proxypass;
 
-	public ProxyLocation(String location, String proxypass) {
+	public ProxyLocation(String location, String proxypass, Boolean includeTrailingSlash) {
 		super(location);
 
 		log.debug("Creating proxy for Location: " + location + " , proxypass: " + proxypass);
 
-		if (!proxypass.endsWith("/")) {
+		if (!proxypass.endsWith("/") && includeTrailingSlash) {
 			proxypass = proxypass + "/";
 		}
 		this.proxypass = proxypass;
 	}
 
-	public ProxyLocation(String location, String proxypass, String description) {
+	public ProxyLocation(String location, String proxypass, String description, Boolean includeTrailingSlash) {
 		super(location, description);
 
 		log.debug("Creating proxy for Location: " + location + " , proxypass: " + proxypass);
 
-		if (!proxypass.endsWith("/")) {
+		if (!proxypass.endsWith("/") && includeTrailingSlash) {
 			proxypass = proxypass + "/";
 		}
 		this.proxypass = proxypass;
